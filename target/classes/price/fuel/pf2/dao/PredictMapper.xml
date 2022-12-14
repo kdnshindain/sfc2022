@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper     
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"     
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="PredictDao">
+ 
+    <select id="selectList" resultType="HMap" parameterType="HMap">
+	   	select  ens_id, 
+				as_of_date, 
+				pred_date, 
+				pred_step, 
+				ici1_pred_val as ici1, 
+				ici3_pred_val as ici3, 
+				ici4_pred_val as ici4, 
+				gci_pred_val as gci
+	  	 from pipeline.vw_predict
+		 where pred_date <![CDATA[>]]> #{asOfDate} 
+		   and ens_id in (
+		               select max(ens_id)
+		                 from pipeline.vw_predict
+		                where as_of_date <![CDATA[<]]> #{asOfDate}  
+		                )
+		   and ens_id > -1
+		   and as_of_date in (
+		   		       select max(as_of_date)
+		                 from pipeline.vw_predict
+		                where as_of_date <![CDATA[<]]> #{asOfDate} 
+		                  and ens_id <![CDATA[>]]> -1
+		                )
+		 order by pred_step
+		 limit 90
+    </select>
+    
+    <!-- detail -->
+    <select id="selectOne" resultType="HMap" parameterType="HMap">
+		select  ens_id, 
+				as_of_date, 
+				pred_date, 
+				pred_step, 
+				ici1_pred_val as ici1, 
+				ici3_pred_val as ici3, 
+				ici4_pred_val as ici4, 
+				gci_pred_val as gci
+	  	 from pipeline.vw_predict
+	  	 where ens_id = (select max(ens_id) from pipeline.vw_predict)   
+	    	<if test="asOfDate is not null "> 
+		 	 and 	as_of_date = #{asOfDate}
+		 	</if>
+	    	<if test="predDate is not null "> 
+		 	 and 	pred_date = #{predDate}
+		 	</if>
+	    	<if test="predStep > 0 "> 
+		 	 and 	pred_step = #{predStep}
+		 	</if>
+    </select>
+
+ 
+ </mapper>

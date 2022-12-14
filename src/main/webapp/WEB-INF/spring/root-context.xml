@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<!-- DB -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+	    <property name="driverClass" value="org.postgresql.Driver"></property>
+	    <property name="url" value="jdbc:postgresql://103.218.158.147:5432/pg_dbpf2"></property>
+	    <property name="username" value="postgres"></property>
+	    <property name="password" value="qwer1234"></property>
+	</bean>
+
+    <!-- sqlSessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:/mybatis/mybatis-config.xml" />
+        <property name="mapperLocations" value="classpath:/price/fuel/pf2/**/*.xml" />
+    </bean>	
+    
+    <!-- sqlSessionTemplate -->
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory" />
+    </bean>
+    
+	
+		
+</beans>
+
+
+

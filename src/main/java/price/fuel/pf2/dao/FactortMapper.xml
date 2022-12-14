@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper     
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"     
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="FactorDao">
+ 
+    <select id="selectList" resultType="HMap" parameterType="HMap">
+		select 	case when y_id=147 then 'ici1'
+					 when y_id=148 then 'ici2'
+					 when y_id=149 then 'ici3'
+					 when y_id=150 then 'ici4'
+					 when y_id=290 then 'gci'
+				end category
+			, as_of_date 
+			, pred_date 
+			, meta_nm 
+			, fi_rank, fi_score 
+		from pipeline.vw_features
+		where y_id = CAST (#{categoryNo} AS INTEGER)
+		  and (as_of_date, trn_set_id) in 
+		  	  ( select max(as_of_date), max(trn_set_id) 
+		  		from   pipeline.vw_features 
+		  		where  y_id=CAST (#{categoryNo} AS INTEGER)
+		  		and as_of_date<![CDATA[<=]]> #{asOfDate}
+		  		)
+		order by fi_rank 
+		limit 10
+    </select>
+    
+    <!-- detail -->
+    <select id="selectOne" resultType="HMap" parameterType="HMap">
+		select  ens_id, 
+				as_of_date, 
+				pred_date, 
+				pred_step, 
+				ici1_pred_val as ici1, 
+				ici3_pred_val as ici3, 
+				ici4_pred_val as ici4, 
+				gci_pred_val as gci
+	  	 from pipeline.vw_predict
+	  	 where ens_id = (select max(ens_id) from pipeline.vw_predict)   
+	    	<if test="asOfDate is not null "> 
+		 	 and 	as_of_date = #{asOfDate}
+		 	</if>
+	    	<if test="predDate is not null "> 
+		 	 and 	pred_date = #{predDate}
+		 	</if>
+	    	<if test="predStep > 0 "> 
+		 	 and 	pred_step = #{predStep}
+		 	</if>
+    </select>
+
+ 
+ </mapper>
