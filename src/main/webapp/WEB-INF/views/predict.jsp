@@ -45,6 +45,10 @@ if(predDate != null){
 		<link rel="stylesheet" href="./assets/home/css/style.css">
 		<link rel="stylesheet" href="./assets/node_modules/bootstrap/dist/css/bootstrap.css" />
 		<script src="./assets/node_modules/bootstrap/dist/js/bootstrap.js" ></script>
+		<script type="module" src="./assets/node_modules/chart.js/dist/chart.js"></script>				
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+		
+		
 		<style type="text/css">
 		
 .highcharts-figure,
@@ -94,21 +98,8 @@ if(predDate != null){
 		
 	</head>
 	<body>
-	
-	<p> &nbsp; </p>
-	
 	<div class = "box">
-		<div class = "nav">
-			<div class="nav_btn">
-	           <input type="button" class="btn btn-primary" style="width: 100%" value="Home" onclick="location.href='<%=request.getContextPath() %>/';">		
-			</div>			
-			<div class="nav_btn">
-	           <input type="button" class="btn btn-primary" style="width: 100%" value="예측 서비스" onclick="location.href='<%=request.getContextPath() %>/predict';">		
-			</div>
-			<div class="nav_btn">
-	           <input type="button" class="btn btn-primary" style="width: 100%" value="분석 서비스" onclick="location.href='<%=request.getContextPath() %>/factor';">		
-			</div>	
-		</div><!-- nav -->
+		<%@ include file="../include/nav.jsp" %>
 		<div class="content">		
 			<div class="search">
 				<form class="search_form" action="<%=request.getContextPath()%>/predict">
@@ -131,7 +122,6 @@ if(predDate != null){
 				</form>
 			
 			</div>
-	<p> &nbsp; </p>
 	
 <script src="./assets/predict/code/highcharts.js"></script>
 <script src="./assets/predict/code/modules/series-label.js"></script>
@@ -147,13 +137,63 @@ if(predDate != null){
 		    </div>
 		</figure>
 		<figure class="highcharts-figure" style="width:50%;border:3px solid yellow">
-		   	<div class="inspection">
-		   		<p>에너지 연료 단가 변동요인 분석</p>
+		   	<div class="inspection" style="width:900px;height:900px;">
+		   		<p>CHART JS 적용 中</p>
+		   		<canvas id="myChart"></canvas>
 		   	</div>
 		</figure>
     </div>
 
 	<script type="text/javascript">
+	var context = document.getElementById('myChart').getContext('2d');
+	var myChart = new Chart(context, {
+		type:'bar',
+		data: {
+			labels:[
+				'1','2','3','4','5','6','7'
+			],
+			datasets:[{
+				label:'test1',
+				fill:false,
+				data:[
+					10,11,12,13,14,15,16
+				],
+				backgroundColor:[
+					'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+				],
+				borderColor:[
+					'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+				],
+				borderWidth: 1
+			
+			}
+		]
+	},
+	options:{
+		scales: {
+			yAxes:[
+				{ticks:{
+					beginAtZero:true
+				}
+				}
+			]
+			
+		}
+		}
+	}
+	);
+	/*	
+	*/
 // Data retrieved from https://www.vikjavev.no/ver/snjomengd
 
 Highcharts.chart('pred', {
