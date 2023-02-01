@@ -8,9 +8,9 @@
 	<!-- DB -->
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
 	    <property name="driverClass" value="org.postgresql.Driver"></property>
-	    <property name="url" value="jdbc:postgresql://103.218.158.147:5432/pg_dbpf2"></property>
+	    <property name="url" value="jdbc:postgresql://localhost:5432/postgres"></property>
 	    <property name="username" value="postgres"></property>
-	    <property name="password" value="qwer1234"></property>
+	    <property name="password" value="6514"></property>
 	</bean>
 
     <!-- sqlSessionFactory -->

@@ -8,8 +8,13 @@
 List<HashMap> mList = (List<HashMap>)request.getAttribute("mList");
 List<HashMap> pList = (List<HashMap>)request.getAttribute("pList");
 String category = (String)request.getAttribute("category");
+//현재날짜
 String asOfDate = (String)request.getAttribute("asOfDate");
 
+//예측날짜
+//String predDate = (String)request.getAttribute("predDate");
+
+//날짜 파싱
 StringBuffer buffer1 = new StringBuffer();
 buffer1.append(asOfDate.toString().substring(0, 4));
 buffer1.append("-");
@@ -17,6 +22,19 @@ buffer1.append(asOfDate.toString().substring(4, 6));
 buffer1.append("-");
 buffer1.append(asOfDate.toString().substring(6, 8));
 String as_of_date = buffer1.toString();
+
+//예측날짜 null 방지
+/*
+if(predDate != null){
+	StringBuffer buffer2 = new StringBuffer();
+	buffer2.append(predDate.toString().substring(0, 4));
+	buffer2.append("-");
+	buffer2.append(predDate.toString().substring(4, 6));
+	buffer2.append("-");
+	buffer2.append(predDate.toString().substring(6, 8));
+	String pred_date = buffer2.toString();		
+}
+*/
 %>
 
 
@@ -24,8 +42,15 @@ String as_of_date = buffer1.toString();
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Smart Fuel System</title>
-		    <link rel="stylesheet" href="assets/home/css/style.css">
+		<link rel="stylesheet" href="./assets/home/css/style.css">
+		<link rel="stylesheet" href="./assets/node_modules/bootstrap/dist/css/bootstrap.css" />
+		<script src="./assets/node_modules/bootstrap/dist/js/bootstrap.js" ></script>
+		<script type="module" src="./assets/node_modules/chart.js/dist/chart.js"></script>				
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+		
+		
 		<style type="text/css">
+		
 .highcharts-figure,
 .highcharts-data-table table {
     min-width: 310px;
@@ -70,44 +95,108 @@ String as_of_date = buffer1.toString();
 }
 
 		</style>
+		
 	</head>
 	<body>
-	
-	<p> &nbsp; </p>
-	<form action="<%=request.getContextPath()%>/predict">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		현재날짜 :
-		<input type-"text" name="asOfDate" value="<%=asOfDate %>">
-		<br&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		예측유형 :
-		<select name="category" id="cars">
-		  <option value="gci" <% if ("gci".equals(category)) out.println("selected"); %>>GCI :호주 글로벌 유연탄 인덱스</option>
-		  <option value="ici1" <% if ("ici1".equals(category)) out.println("selected"); %>>ICI1 : 인도네시아 고열량탄</option>
-		  <option value="ici3" <% if ("ici3".equals(category)) out.println("selected"); %>>ICI3 : 인도네시아 중열량탄</option>
-		  <option value="ici4" <% if ("ici4".equals(category)) out.println("selected"); %>>ICI4 : 인도네시아 저열량탄</option>
-		</select>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<input type="submit" value="예측실행">
-	</form>
-	<p> &nbsp; </p>
+	<div class = "box">
+		<%@ include file="../include/nav.jsp" %>
+		<div class="content">		
+			<div class="search">
+				<form class="search_form" action="<%=request.getContextPath()%>/predict">
+					<div class="search_date">
+						<label for="asOfDate">현재날짜</label>
+						<input type="text" class="form-control" name="asOfDate" value="<%=asOfDate %>" id="asOfDate">
+					</div>
+					<div class="search_category">
+						<label for="category">예측유형</label>
+						<select name="category" class="form-select" id="category">
+						  <option value="gci" <% if ("gci".equals(category)) out.println("selected"); %>>GCI :호주 글로벌 유연탄 인덱스</option>
+						  <option value="ici1" <% if ("ici1".equals(category)) out.println("selected"); %>>ICI1 : 인도네시아 고열량탄</option>
+						  <option value="ici3" <% if ("ici3".equals(category)) out.println("selected"); %>>ICI3 : 인도네시아 중열량탄</option>
+						  <option value="ici4" <% if ("ici4".equals(category)) out.println("selected"); %>>ICI4 : 인도네시아 저열량탄</option>
+						</select>
+					</div>
+					<div class="search_button">
+						<input type="submit" class="btn btn-secondary" value="예측 및 분석">
+					</div>
+				</form>
+			
+			</div>
 	
 <script src="./assets/predict/code/highcharts.js"></script>
 <script src="./assets/predict/code/modules/series-label.js"></script>
 <script src="./assets/predict/code/modules/exporting.js"></script>
 <script src="./assets/predict/code/modules/export-data.js"></script>
 <script src="./assets/js/code/modules/accessibility.js"></script>
-<figure class="highcharts-figure">
-    <div id="container"></div>
-    <p class="highcharts-description">
-        Smart Fuel Center 클라우드 서비스를 위한 예측 시스템
-    </p>
-</figure>
+    <div class="show">
+		<figure class="highcharts-figure" style="width:50%;border:3px solid red">
+		    <div id="pred" class="prediction">
+			    <p class="highcharts-description">
+			        Smart Fuel Center 클라우드 서비스를 위한 예측 시스템
+			    </p>
+		    </div>
+		</figure>
+		<figure class="highcharts-figure" style="width:50%;border:3px solid yellow">
+		   	<div class="inspection" style="width:900px;height:900px;">
+		   		<p>CHART JS 적용 中</p>
+		   		<canvas id="myChart"></canvas>
+		   	</div>
+		</figure>
+    </div>
 
-		<script type="text/javascript">
+	<script type="text/javascript">
+	var context = document.getElementById('myChart').getContext('2d');
+	var myChart = new Chart(context, {
+		type:'bar',
+		data: {
+			labels:[
+				'1','2','3','4','5','6','7'
+			],
+			datasets:[{
+				label:'test1',
+				fill:false,
+				data:[
+					10,11,12,13,14,15,16
+				],
+				backgroundColor:[
+					'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+				],
+				borderColor:[
+					'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+				],
+				borderWidth: 1
+			
+			}
+		]
+	},
+	options:{
+		scales: {
+			yAxes:[
+				{ticks:{
+					beginAtZero:true
+				}
+				}
+			]
+			
+		}
+		}
+	}
+	);
+	/*	
+	*/
 // Data retrieved from https://www.vikjavev.no/ver/snjomengd
 
-Highcharts.chart('container', {
+Highcharts.chart('pred', {
     chart: {
         type: 'spline'
     },
@@ -200,27 +289,23 @@ Highcharts.chart('container', {
         }
     ]
 });
-
+	
+	
 		</script>
-            
-            <p>&nbsp;</p>
-            <input type="button" value="Home" onclick="location.href='<%=request.getContextPath() %>/';">
-            &nbsp;
-            <input type="button" value="예측 서비스" onclick="location.href='<%=request.getContextPath() %>/predict';">
-            &nbsp;
-            <input type="button" value="분석 서비스" onclick="location.href='<%=request.getContextPath() %>/factor';">
             <p>&nbsp;</p>
 
-		
-        <footer class="site-footer">
-            <div class="container">
-                <div class="site-footer-inner has-top-divider">
-                    <div class="footer-copyright">&copy; Smart Energy Business Team, KEPCO-KDN</div>
-                </div>
-            </div>
-        </footer>
+                    		
 
     <script src="./assets/home/js/main.min.js"></script>	
+		</div><!-- content -->		
+	</div><!-- box -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="site-footer-inner has-top-divider">
+                <div class="footer-copyright">&copy; Smart Energy Business Team, KEPCO-KDN</div>
+            </div>
+        </div>
+    </footer>
 	</body>
 </html>
 

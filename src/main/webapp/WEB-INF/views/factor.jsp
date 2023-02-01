@@ -34,7 +34,10 @@ if(predDate != null){
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Smart Fuel System</title>
-		    <link rel="stylesheet" href="assets/home/css/style.css">
+		<link rel="stylesheet" href="assets/home/css/style.css">
+		<link rel="stylesheet" href="./assets/node_modules/bootstrap/dist/css/bootstrap.css" />
+		<script src="./assets/node_modules/bootstrap/dist/js/bootstrap.js" ></script>
+
 		<style type="text/css">
 .highcharts-figure,
 .highcharts-data-table table {
@@ -95,24 +98,30 @@ if(predDate != null){
 		</style>
 	</head>
 	<body>
-	
-	<p> &nbsp; </p>
-	<form action="<%=request.getContextPath()%>/factor">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		현재날짜 :
-		<input type-"text" name="asOfDate" value="<%=asOfDate %>">
-		<br&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		예측유형 :
-		<select name="category" id="cars">
-		  <option value="gci" <% if ("gci".equals(category)) out.println("selected"); %>>GCI :호주 글로벌 유연탄 인덱스</option>
-		  <option value="ici1" <% if ("ici1".equals(category)) out.println("selected"); %>>ICI1 : 인도네시아 고열량탄</option>
-		  <option value="ici3" <% if ("ici3".equals(category)) out.println("selected"); %>>ICI3 : 인도네시아 중열량탄</option>
-		  <option value="ici4" <% if ("ici4".equals(category)) out.println("selected"); %>>ICI4 : 인도네시아 저열량탄</option>
-		</select>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<input type="submit" value="분석실행">
-	</form>
+	<div class="box">
+		<%@ include file="../include/nav.jsp" %>
+			<div class="content">
+			<div class="search">
+				<form class="search_form" action="<%=request.getContextPath()%>/predict">
+					<div class="search_date">
+						<label for="asOfDate">현재날짜</label>
+						<input type="text" class="form-control" name="asOfDate" value="<%=asOfDate %>" id="asOfDate">
+					</div>
+					<div class="search_category">
+						<label for="category">예측유형</label>
+						<select name="category" class="form-select" id="category">
+						  <option value="gci" <% if ("gci".equals(category)) out.println("selected"); %>>GCI :호주 글로벌 유연탄 인덱스</option>
+						  <option value="ici1" <% if ("ici1".equals(category)) out.println("selected"); %>>ICI1 : 인도네시아 고열량탄</option>
+						  <option value="ici3" <% if ("ici3".equals(category)) out.println("selected"); %>>ICI3 : 인도네시아 중열량탄</option>
+						  <option value="ici4" <% if ("ici4".equals(category)) out.println("selected"); %>>ICI4 : 인도네시아 저열량탄</option>
+						</select>
+					</div>
+					<div class="search_button">
+						<input type="submit" class="btn btn-secondary" value="예측 및 분석">
+					</div>
+				</form>
+			
+			</div>
 	<p> &nbsp; </p>
 	
 <script src="./assets/predict/code/highcharts.js"></script>
@@ -190,15 +199,9 @@ Highcharts.chart('container', {
 });
 
 		</script>
+		</div><!-- content -->
 		
-            <p>&nbsp;</p>
-            <input type="button" value="Home" onclick="location.href='<%=request.getContextPath() %>/';">
-            &nbsp;
-            <input type="button" value="예측 서비스" onclick="location.href='<%=request.getContextPath() %>/predict';">
-            &nbsp;
-            <input type="button" value="분석 서비스" onclick="location.href='<%=request.getContextPath() %>/factor';">
-            <p>&nbsp;</p>
-		
+		</div><!-- box -->
         <footer class="site-footer">
             <div class="container">
                 <div class="site-footer-inner has-top-divider">
